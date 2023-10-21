@@ -1,6 +1,6 @@
 # Bryson Pelechaty Computer Science Capstone Research Project
-# Purpose of program: To analyze and visualize EEG (Electroencephalography) data of indivduals listening to music. 
-# Functions included: Cleans, pre-processes, visualizes and analyzes EEG Data 
+# Purpose of program: To analyze and visualize EEG (Electroencephalography) data of indivduals listening to music.
+# Functions included: Cleans, pre-processes, visualizes and analyzes EEG Data
 
 import pandas as pd
 import numpy as np
@@ -18,20 +18,20 @@ import os
 from sklearn.ensemble import RandomForestClassifier
 
 
-# % matplotlib inline 
+# % matplotlib inline
 
-# Note about data: 
-# Each CSV file used in this project is an 8 by N CSV file, with the data measuring a value of voltage. Each datapoint corresponds with a sensor on the headset. 
+# Note about data:
+# Each CSV file used in this project is an 8 by N CSV file, with the data measuring a value of voltage. Each datapoint corresponds with a sensor on the headset.
 
 
-
-def clean1(filename): # Method one of reading in the EEG CSV File. Used when visualizing 
+def clean1(filename):  # Method one of reading in the EEG CSV File. Used when visualizing
     data = pd.read_csv(filename, skiprows=4)
     data.columns = data.columns.str.strip()
     return data
 
 
-def clean2(filename):# Second method of reading in an EEG CSV file. Used when processing the data.
+# Second method of reading in an EEG CSV file. Used when processing the data.
+def clean2(filename):
     data = pd.read_csv(filename, sep=",", header=None, skiprows=5005).values
 
     return data
@@ -48,13 +48,15 @@ def clean3(filename):
 
 
 def get_data():
-    arr = os.listdir("/Users/brysonpelechaty/PycharmProjects/pythonProject1/Data3")
+    arr = os.listdir(
+        "/Users/brysonpelechaty/PycharmProjects/pythonProject1/Data3")
     arr1 = []
 
     for file in os.listdir('/Users/brysonpelechaty/PycharmProjects/pythonProject1/Data3'):
         if file.endswith(".txt"):
             # print(os.path.join('/Users/brysonpelechaty/PycharmProjects/pythonProject1/Data', file))
-            arr1.append(os.path.join('/Users/brysonpelechaty/PycharmProjects/pythonProject1/Data3', file))
+            arr1.append(os.path.join(
+                '/Users/brysonpelechaty/PycharmProjects/pythonProject1/Data3', file))
 
     for i in range(len(arr1)):
         data = clean1(arr1[i])
@@ -138,10 +140,12 @@ def fft_filter(data):
     # plt.plot(time, notch_channels[i])
 
     for i in range(len(channels)):
-        bandpass_channels.append(bandpass(band[0], band[1], channels[i], fs=fs))
+        bandpass_channels.append(
+            bandpass(band[0], band[1], channels[i], fs=fs))
 
     for i in range(len(notch_channels)):
-        bandpass_notch_channels.append(bandpass(band[0], band[1], notch_channels[i], fs=fs))
+        bandpass_notch_channels.append(
+            bandpass(band[0], band[1], notch_channels[i], fs=fs))
 
         # for i in range(len(bandpass_notch_channels)):
     #   freq, y = fft(bandpass_notch_channels[i], fs)
@@ -170,7 +174,7 @@ def get_dataframes(data):
         if (i == 0):
             df1["Frequency"] = freq
             df1["y"] = y
-            df1["sensor"]=1
+            df1["sensor"] = 1
         # elif (i == 1):
         #   df2["Frequency"] = freq
         #  df2["y"] = y
@@ -254,7 +258,6 @@ def make_vector2(df1, df3, df4, df5, df6, df7, df8):
     return vector
 
 
-
 def get_freq_band(data):
     fft_vals = data["y"]
 
@@ -306,24 +309,22 @@ def do_experiment(data, expno):
 
 def build_ML_Model(data):
     print("less go", data)
-    brain_wave_dict = {"Delta": 0, "Theta": 1, "Alpha": 2, "Beta": 3, "Gamma": 4}
+    brain_wave_dict = {"Delta": 0, "Theta": 1,
+                       "Alpha": 2, "Beta": 3, "Gamma": 4}
 
-    label_dict = {"ex01": 0, "ex02": 1, "ex03": 2, "ex04": 3, "ex05": 4, "ex06": 5, "ex07": 6, "ex08": 7, "ex09": 8}
+    label_dict = {"ex01": 0, "ex02": 1, "ex03": 2, "ex04": 3,
+                  "ex05": 4, "ex06": 5, "ex07": 6, "ex08": 7, "ex09": 8}
     sensor_dict = {"sensor1": 0, "sensor3": 2, "sensor4": 3, "sensor5": 4, "sensor6": 5, "sensor7": 6,
                    "sensor8": 7}
 
-
     data["Label"] = data["Label"].map(label_dict)
-    #data["Sensor"] = data["Sensor"].map(sensor_dict)
+    # data["Sensor"] = data["Sensor"].map(sensor_dict)
     y = data["Label"].values
 
     X = data
 
     X = X.drop("Label", axis=1)
     X_encoded = pd.get_dummies(X, columns=["sensor"])
-
-    print("hereee")
-    print(X_encoded)
 
     yarr = []
     for i in range(len(data["Label"])):
@@ -336,7 +337,8 @@ def build_ML_Model(data):
     print(X)
     print("here")
     print(actual_y)
-    X_train, X_test, y_train, y_test, = train_test_split(X_encoded, yarr, test_size=0.1)
+    X_train, X_test, y_train, y_test, = train_test_split(
+        X_encoded, yarr, test_size=0.1)
     lin_clf = svm.LinearSVC()
     lin_clf.fit(X_train, y_train)
 
@@ -345,11 +347,13 @@ def build_ML_Model(data):
     plot_confusion_matrix(lin_clf, X_test, y_test)
     plt.show()
 
+
 def build_ML_Model_RF(data):
-    label_dict = {"ex01": 0, "ex02": 1, "ex03": 2, "ex04": 3, "ex05": 4, "ex06": 5, "ex07": 6, "ex08": 7, "ex09": 8}
+    label_dict = {"ex01": 0, "ex02": 1, "ex03": 2, "ex04": 3,
+                  "ex05": 4, "ex06": 5, "ex07": 6, "ex08": 7, "ex09": 8}
     data["Label"] = data["Label"].map(label_dict)
-    X=data[["Frequency","y","sensor"]]
-    y=data["Label"]
+    X = data[["Frequency", "y", "sensor"]]
+    y = data["Label"]
     model = RandomForestClassifier(n_estimators=10)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
@@ -377,7 +381,8 @@ def do_all():
     temp_data = pd.DataFrame
 
     for i in range(len(data_list)):
-        temp_data = do_experiment(clean2(data_list[i]), search_string(data_list[i]))
+        temp_data = do_experiment(
+            clean2(data_list[i]), search_string(data_list[i]))
 
         cleaned_data_list.append(temp_data)
 
@@ -391,9 +396,11 @@ def do_all():
 
 
 def pre_process(data):
-    brain_wave_dict = {"Delta": 0, "Theta": 1, "Alpha": 2, "Beta": 3, "Gamma": 4}
+    brain_wave_dict = {"Delta": 0, "Theta": 1,
+                       "Alpha": 2, "Beta": 3, "Gamma": 4}
 
-    label_dict = {"ex01": 0, "ex02": 1, "ex03": 2, "ex04": 3, "ex05": 4, "ex06": 5, "ex07": 6, "ex08": 7, "ex09": 8}
+    label_dict = {"ex01": 0, "ex02": 1, "ex03": 2, "ex04": 3,
+                  "ex05": 4, "ex06": 5, "ex07": 6, "ex08": 7, "ex09": 8}
 
     data["band"] = data["band"].map(brain_wave_dict)
     data["Label"] = data["Label"].map(label_dict)
@@ -418,15 +425,18 @@ def do_all2():
     other_data = pd.DataFrame
     # print(len(data_list))
     # print(clf)
-    temp_data = do_experiment(clean2(data_list[0]), search_string(data_list[0]))
-    other_data = do_experiment(clean2(data_list[1]), search_string(data_list[1]))
+    temp_data = do_experiment(
+        clean2(data_list[0]), search_string(data_list[0]))
+    other_data = do_experiment(
+        clean2(data_list[1]), search_string(data_list[1]))
     # print("other data is ",other_data)
     x_new, y_new = pre_process(other_data)
-    print("processed data is ", x_new, y_new)
-    print("here guys ", temp_data)
-    brain_wave_dict = {"Delta": 0, "Theta": 1, "Alpha": 2, "Beta": 3, "Gamma": 4}
 
-    label_dict = {"ex01": 0, "ex02": 1, "ex03": 2, "ex04": 3, "ex05": 4, "ex06": 5, "ex07": 6, "ex08": 7, "ex09": 8}
+    brain_wave_dict = {"Delta": 0, "Theta": 1,
+                       "Alpha": 2, "Beta": 3, "Gamma": 4}
+
+    label_dict = {"ex01": 0, "ex02": 1, "ex03": 2, "ex04": 3,
+                  "ex05": 4, "ex06": 5, "ex07": 6, "ex08": 7, "ex09": 8}
 
     temp_data["band"] = temp_data["band"].map(brain_wave_dict)
     temp_data["Label"] = temp_data["Label"].map(label_dict)
@@ -451,25 +461,24 @@ def do_all3():
     data_list = get_data()
     classify = np.array
     classify = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-    print("classify is ", classify)
 
     clf = sklearn.linear_model.SGDClassifier()
     clf.classes_ = classify.shape
     main_data = pd.DataFrame
     temp_data = pd.DataFrame
 
-    temp_data = do_experiment(clean2(data_list[0]), search_string(data_list[0]))
+    temp_data = do_experiment(
+        clean2(data_list[0]), search_string(data_list[0]))
     x_1, y_1 = pre_process(temp_data)
     clf.partial_fit(x_1, y_1)
 
     for i in range(1, (len(data_list) - 2)):
-        main_data = do_experiment(clean2(data_list[i]), search_string(data_list[i]))
+        main_data = do_experiment(
+            clean2(data_list[i]), search_string(data_list[i]))
         X, y = pre_process(main_data)
         clf.partial_fit(X, y)
-        print("great success! ")
 
-    temp_data = do_experiment(clean2(data_list[-1]), search_string(data_list[-1]))
+    temp_data = do_experiment(
+        clean2(data_list[-1]), search_string(data_list[-1]))
     x_1, y_1 = pre_process(temp_data)
     print("the score is ", clf.score(x_1, y_1))
-
-
